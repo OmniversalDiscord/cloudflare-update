@@ -98,7 +98,10 @@ fn delete_record(subdomain: String, token: &String) {
 }
 
 fn main() {
-    let token = env::var("CLOUDFLARE_TOKEN").expect("CLOUDFLARE_TOKEN was not set");
+    let token = format!("Bearer {}", 
+        env::var("CLOUDFLARE_TOKEN").expect("CLOUDFLARE_TOKEN was not set")
+    );
+
     let get_ip = Command::new("dig")
                                       .arg("@resolver1.opendns.com")
                                       .arg("ANY")
@@ -109,8 +112,6 @@ fn main() {
     
     let ip_addr = String::from_utf8(get_ip.stdout).unwrap();
 
-    println!("{}", token);
-    println!("{}", ip_addr);
     let args: Vec<String> = env::args().collect();
     if args.len() != 3 {
         println!("invalid syntax: cloudflare-update [add|remove] <subdomain>")
